@@ -10,7 +10,7 @@ import axios from 'axios';
 function App() {
 
   ///// Component States /////
-  const [vocab, setVocab] = useState(null);
+  const [vocab, setVocab] = useState({japanese: "人", english: "Person"});
   const [currentID, setCurrentID] = useState(0);
   const [showEnglish, setShowEnglish] = useState(false);
   ////////////////////////////
@@ -18,11 +18,15 @@ function App() {
   ///// AWS API Handling /////
   const fetchVocabWord = async (wordId) => {
 
-    const apiURL = `https://8yjjcdl4u1.execute-api.us-east-2.amazonaws.com/$default/vocab/word?param1=${wordId}`;
+    const apiURL = `https://8yjjcdl4u1.execute-api.us-east-2.amazonaws.com/prod/vocab/word`;
 
     try {
 
-      const response = await axios.get(apiURL);
+      const response = await axios.get(apiURL, {
+        params: {
+          param1: wordId
+        }
+      });
       const wordData = response.data
 
       setVocab({japanese: wordData.japaneseWord, english: wordData.englishTranslation})
@@ -51,7 +55,7 @@ function App() {
       setCurrentID(currentID + 1);
     }
 
-    fetchVocabWord(currentID.toString());
+    fetchVocabWord(currentID);
 
   }, [currentID])
 
@@ -65,7 +69,7 @@ function App() {
       setCurrentID(currentID + 1);
     }
 
-    fetchVocabWord(currentID.toString())
+    fetchVocabWord(currentID)
 
   }, [currentID])
   /////////////////////////////
@@ -76,7 +80,7 @@ function App() {
   // Fetches first vocab word when main component loads
   useEffect(() => {
 
-    fetchVocabWord(currentID.toString());
+    fetchVocabWord(currentID);
 
   }, [currentID]);
 
