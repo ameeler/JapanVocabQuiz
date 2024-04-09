@@ -2,14 +2,12 @@ import './App.css';
 import React, {useState, useEffect, useCallback} from 'react';
 import axios from 'axios';
 import Furigana from './Furigana';
-// import {Furigana} from 'furigana-react';
-// import {ReactFuri} from 'react-furi';
-// import { useFuriPairs, Wrapper, Pair, Text, Furi } from 'react-furi'
 
 function App() {
 
   ///// Component States /////
   const [vocab, setVocab] = useState([]);
+  const [failedVocab, setFailedVocab] = useState([]);
   const [currentIdx, setCurrentIdx] = useState(0);
   const [showEnglish, setShowEnglish] = useState(false);
   ////////////////////////////
