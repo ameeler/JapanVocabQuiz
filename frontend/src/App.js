@@ -1,41 +1,38 @@
 import './App.css';
 import React, {useState, useEffect, useCallback} from 'react';
 import axios from 'axios';
-
-// const mockVocab = [
-//   {japanese: "猫", english: "Cat", passed: false},
-//   {japanese: "犬", english: "Dog", passed: false}
-// ]
+import Furigana from './Furigana';
+// import {Furigana} from 'furigana-react';
+// import {ReactFuri} from 'react-furi';
+// import { useFuriPairs, Wrapper, Pair, Text, Furi } from 'react-furi'
 
 function App() {
 
   ///// Component States /////
-  const [vocab, setVocab] = useState({japanese: "人", english: "Person"});
-  const [currentID, setCurrentID] = useState(0);
+  const [vocab, setVocab] = useState([]);
+  const [currentIdx, setCurrentIdx] = useState(0);
   const [showEnglish, setShowEnglish] = useState(false);
   ////////////////////////////
 
   ///// AWS API Handling /////
-  const fetchVocabWord = async (wordId) => {
+  const fetchVocab = async () => {
 
-    const apiURL = `https://8yjjcdl4u1.execute-api.us-east-2.amazonaws.com/prod/vocab/word`;
+    const apiURL = `https://japanese-vocab-bucket.s3.us-east-2.amazonaws.com/n5_vocab.json`;
 
     try {
 
-      const response = await axios.get(apiURL, {
-        params: {
-          param1: wordId
-        }
-      });
-      const wordData = response.data
+      const response = await axios.get(apiURL);
 
-      setVocab({japanese: wordData.japaneseWord, english: wordData.englishTranslation})
+      console.log("Success in fetching data!")
+
+      setVocab(response.data);
 
     } catch (error) {
 
-      console.error(error);
+      console.error("Error in fetching data:", error);
+      // setError(error);
 
-    }
+    } 
 
   }
   ////////////////////////////
@@ -49,42 +46,46 @@ function App() {
 
     setShowEnglish(false); // Hide English for next word
 
-    if (currentID === 1) {
-      setCurrentID(0);
+    if (currentIdx === vocab.length) {
+
+      setCurrentIdx(0);
+
     } else {
-      setCurrentID(currentID + 1);
+
+      setCurrentIdx(currentIdx + 1)
+
     }
 
-    fetchVocabWord(currentID);
-
-  }, [currentID])
+  }, [currentIdx, vocab.length])
 
   const handleFail = useCallback(() => {
 
     setShowEnglish(false);
 
-    if (currentID === 1) {
-      setCurrentID(0);
+    if (currentIdx === vocab.length) {
+
+      setCurrentIdx(0);
+
     } else {
-      setCurrentID(currentID + 1);
+
+      setCurrentIdx(currentIdx + 1)
+
     }
 
-    fetchVocabWord(currentID)
-
-  }, [currentID])
+  }, [currentIdx, vocab.length])
   /////////////////////////////
  
 
   ///// Use Effects /////
 
-  // Fetches first vocab word when main component loads
+  // Loads vocabulary from S3
   useEffect(() => {
 
-    fetchVocabWord(currentID);
+    fetchVocab();
 
-  }, [currentID]);
+  }, []);
 
-  ///// Handles keyboard listeners /////
+  // Handles keyboard inputs
   useEffect(() => {
 
     const handleKeyPress = (e) => {
@@ -111,24 +112,43 @@ function App() {
 
     };
 
-  }, [showEnglish, currentID, handleShowToggle, handlePass, handleFail]);
+  }, [showEnglish, currentIdx, handleShowToggle, handlePass, handleFail]);
   //////////////////////////////////////
 
   return (
 
     <div className='App'>
-      <div className='word'>{vocab?.japanese}</div>
+      <div className='word'>
+        
+        {!showEnglish ? (
+          
+          <Furigana word={vocab[currentIdx]?.japanese} reading={vocab[currentIdx]?.reading} showFuri={false}></Furigana>
+
+        ) : (
+
+          <Furigana word={vocab[currentIdx]?.japanese} reading={vocab[currentIdx]?.reading} showFuri={true}></Furigana> 
+
+        )}
+
+      </div>
+
       <hr width="90%"></hr>
-      {showEnglish && <div className='english'>{vocab?.english}</div>}
+
+      {showEnglish && <div className='english'>{vocab[currentIdx]?.english}</div>}
+
       {!showEnglish ? (
+
         <div className='buttons'>
           <button onClick={handleShowToggle}>Show</button>
         </div>
+
       ) : (
+
         <div className='buttons'>
           <button onClick={handlePass} className='pass'>Pass</button>
           <button onClick={handleFail} className='fail'>Fail</button>
         </div>
+
       )}
     </div>
 
