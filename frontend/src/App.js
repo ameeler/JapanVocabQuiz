@@ -1,15 +1,20 @@
 import './App.css';
-import React, {useState, useEffect, useCallback} from 'react';
+import React, {useState, useEffect, useRef, useCallback} from 'react';
 import axios from 'axios';
 import Furigana from './Furigana';
+import Queue from './Queue';
 
 function App() {
 
   ///// Component States /////
-  const [vocab, setVocab] = useState([]);
-  const [failedVocab, setFailedVocab] = useState([]);
-  const [currentIdx, setCurrentIdx] = useState(0);
-  const [showEnglish, setShowEnglish] = useState(false);
+  // const [vocabList, setVocabList] = useState([]); // An array containing vocab words and translations
+  const [currentVocab, setCurrentVocab] = useState({}); // Contains current vocab word
+  const [showEnglish, setShowEnglish] = useState(false); // Flag on whether to show english or not
+
+  const vocabList = useRef([]);
+  const failedIdxQueue = useRef(new Queue());
+  const currentIdx = useRef(0);
+  const cardCount = useRef(0);
   ////////////////////////////
 
   ///// AWS API Handling /////
@@ -23,12 +28,12 @@ function App() {
 
       console.log("Success in fetching data!")
 
-      setVocab(response.data);
+      vocabList.current = response.data;
+      setCurrentVocab(vocabList.current[currentIdx.current]);
 
     } catch (error) {
 
       console.error("Error in fetching data:", error);
-      // setError(error);
 
     } 
 
@@ -37,40 +42,43 @@ function App() {
 
   ///// Function Handling /////
   const handleShowToggle = useCallback(() => {
+
     setShowEnglish(!showEnglish);
+
   }, [showEnglish]);
+
+  const helper = useCallback(() => {
+
+    if (cardCount.current === 5) {
+
+      setCurrentVocab(vocabList.current[failedIdxQueue.current.dequeue()]);
+      cardCount.current = 0;
+
+    } else {
+
+      currentIdx.current += 1;
+      setCurrentVocab(vocabList.current[currentIdx.current]);
+
+    }
+
+    if (failedIdxQueue.current.length() > 0) {cardCount.current++;}
+
+  }, []);
 
   const handlePass = useCallback(() => {
 
     setShowEnglish(false); // Hide English for next word
+    helper();
 
-    if (currentIdx === vocab.length) {
-
-      setCurrentIdx(0);
-
-    } else {
-
-      setCurrentIdx(currentIdx + 1)
-
-    }
-
-  }, [currentIdx, vocab.length])
+  }, [helper])
 
   const handleFail = useCallback(() => {
 
-    setShowEnglish(false);
+    setShowEnglish(false); // Hide English for next word
+    failedIdxQueue.current.enqueue(currentIdx.current);
+    helper();
 
-    if (currentIdx === vocab.length) {
-
-      setCurrentIdx(0);
-
-    } else {
-
-      setCurrentIdx(currentIdx + 1)
-
-    }
-
-  }, [currentIdx, vocab.length])
+  }, [helper]);
   /////////////////////////////
  
 
@@ -110,7 +118,7 @@ function App() {
 
     };
 
-  }, [showEnglish, currentIdx, handleShowToggle, handlePass, handleFail]);
+  }, [showEnglish, handleShowToggle, handlePass, handleFail]);
   //////////////////////////////////////
 
   return (
@@ -120,11 +128,11 @@ function App() {
         
         {!showEnglish ? (
           
-          <Furigana word={vocab[currentIdx]?.japanese} reading={vocab[currentIdx]?.reading} showFuri={false}></Furigana>
+          <Furigana word={currentVocab?.japanese} reading={currentVocab?.reading} showFuri={false}></Furigana>
 
         ) : (
 
-          <Furigana word={vocab[currentIdx]?.japanese} reading={vocab[currentIdx]?.reading} showFuri={true}></Furigana> 
+          <Furigana word={currentVocab?.japanese} reading={currentVocab?.reading} showFuri={true}></Furigana> 
 
         )}
 
@@ -132,7 +140,7 @@ function App() {
 
       <hr width="90%"></hr>
 
-      {showEnglish && <div className='english'>{vocab[currentIdx]?.english}</div>}
+      {showEnglish && <div className='english'>{currentVocab?.english}</div>}
 
       {!showEnglish ? (
 
