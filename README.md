@@ -3,6 +3,10 @@ A project meant to practice full stack development combining my interest in lear
 
 Current functionality: Displays word in Japanese. "Show" button shows the English translation. "Pass" and "Fail" buttons either pass the card if you got it correct or fail the card if you got it wrong.
 
+Quick keys:
+Space bar - Show/Pass
+X - Fail
+
 Utizlizes AWS S3 for vocabulary word storage.
 
 Can access the page through github pages: https://ameeler.github.io/JapanVocabQuiz
