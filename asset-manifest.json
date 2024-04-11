@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/JapanVocabQuiz/static/css/main.2676df60.css",
+    "main.js": "/JapanVocabQuiz/static/js/main.c2b88974.js",
+    "index.html": "/JapanVocabQuiz/index.html",
+    "main.2676df60.css.map": "/JapanVocabQuiz/static/css/main.2676df60.css.map",
+    "main.c2b88974.js.map": "/JapanVocabQuiz/static/js/main.c2b88974.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.2676df60.css",
+    "static/js/main.c2b88974.js"
+  ]
+}
