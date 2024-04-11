@@ -75,10 +75,10 @@ function App() {
   const handleFail = useCallback(() => {
 
     setShowEnglish(false); // Hide English for next word
-    failedIdxQueue.current.enqueue(currentIdx.current);
+    failedIdxQueue.current.enqueue(currentVocab.id - 1);
     helper();
 
-  }, [helper]);
+  }, [helper, currentVocab]);
   /////////////////////////////
  
 

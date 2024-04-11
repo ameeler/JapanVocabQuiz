@@ -7,7 +7,7 @@ COPY public/ /frontend/public
 COPY src/ /frontend/src
 COPY package.json /frontend/
 
-RUN npm install
+RUN npm install --legacy-peer-deps
 
 # There can only be one CMD instruction in the Dockerfile
 CMD ["npm", "start"]
