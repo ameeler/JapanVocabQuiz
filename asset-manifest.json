@@ -1,13 +1,13 @@
 {
   "files": {
-    "main.css": "/JapanVocabQuiz/static/css/main.2676df60.css",
-    "main.js": "/JapanVocabQuiz/static/js/main.b29534d9.js",
+    "main.css": "/JapanVocabQuiz/static/css/main.8607e119.css",
+    "main.js": "/JapanVocabQuiz/static/js/main.210fef5e.js",
     "index.html": "/JapanVocabQuiz/index.html",
-    "main.2676df60.css.map": "/JapanVocabQuiz/static/css/main.2676df60.css.map",
-    "main.b29534d9.js.map": "/JapanVocabQuiz/static/js/main.b29534d9.js.map"
+    "main.8607e119.css.map": "/JapanVocabQuiz/static/css/main.8607e119.css.map",
+    "main.210fef5e.js.map": "/JapanVocabQuiz/static/js/main.210fef5e.js.map"
   },
   "entrypoints": [
-    "static/css/main.2676df60.css",
-    "static/js/main.b29534d9.js"
+    "static/css/main.8607e119.css",
+    "static/js/main.210fef5e.js"
   ]
 }
