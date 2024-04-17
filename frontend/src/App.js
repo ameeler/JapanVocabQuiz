@@ -1,10 +1,11 @@
 import './App.css';
 import React, {useState, useEffect, useRef, useCallback} from 'react';
+import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import Furigana from './Furigana';
 import Queue from './Queue';
 
-function App() {
+function App({level_url}) {
 
   ///// Component States /////
   const [currentVocab, setCurrentVocab] = useState({}); // Contains current vocab word
@@ -14,20 +15,31 @@ function App() {
   const failedIdxQueue = useRef(new Queue());
   const currentIdx = useRef(0);
   const cardCount = useRef(0);
+
+  const { param } = useParams(); // Param from LevelSelectMenu
   ////////////////////////////
 
   ///// AWS API Handling /////
   const fetchVocab = async () => {
 
-    const apiURL = `https://japanese-vocab-bucket.s3.us-east-2.amazonaws.com/n5_vocab.json`;
+    const apiUrls = {
+      '5': process.env.REACT_APP_N5_API_URL,
+      '4': process.env.REACT_APP_N4_API_URL,
+      '3': process.env.REACT_APP_N3_API_URL,
+      '2': process.env.REACT_APP_N2_API_URL,
+      '1': process.env.REACT_APP_N1_API_URL
+    };
 
     try {
 
-      const response = await axios.get(apiURL);
+      const apiUrl = apiUrls[param];
 
+      const response = await axios.get(apiUrl);
       console.log("Success in fetching data!")
 
       vocabList.current = response.data;
+
+      console.log(vocabList.current);
       setCurrentVocab(vocabList.current[getRandomInt(vocabList.current.length)]);
 
 
@@ -130,6 +142,11 @@ function App() {
   return (
 
     <div className='App'>
+
+      <header>
+        <h1>N{param}</h1>
+      </header>
+
       <div className='word'>
         
         {!showEnglish ? (
