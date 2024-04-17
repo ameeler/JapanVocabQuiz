@@ -87,7 +87,6 @@ function App() {
   }, [helper, currentVocab]);
   /////////////////////////////
  
-
   ///// Use Effects /////
 
   // Loads vocabulary from S3
