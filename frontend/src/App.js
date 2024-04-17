@@ -7,7 +7,6 @@ import Queue from './Queue';
 function App() {
 
   ///// Component States /////
-  // const [vocabList, setVocabList] = useState([]); // An array containing vocab words and translations
   const [currentVocab, setCurrentVocab] = useState({}); // Contains current vocab word
   const [showEnglish, setShowEnglish] = useState(false); // Flag on whether to show english or not
 
@@ -29,13 +28,20 @@ function App() {
       console.log("Success in fetching data!")
 
       vocabList.current = response.data;
-      setCurrentVocab(vocabList.current[currentIdx.current]);
+      setCurrentVocab(vocabList.current[getRandomInt(vocabList.current.length)]);
+
 
     } catch (error) {
 
       console.error("Error in fetching data:", error);
 
     } 
+
+  }
+
+  function getRandomInt(max) {
+
+    return Math.floor(Math.random() * max);
 
   }
   ////////////////////////////
@@ -56,7 +62,7 @@ function App() {
 
     } else {
 
-      currentIdx.current += 1;
+      currentIdx.current = getRandomInt(vocabList.current.length); // Index for random vocab word
       setCurrentVocab(vocabList.current[currentIdx.current]);
 
     }
@@ -89,6 +95,7 @@ function App() {
 
     fetchVocab();
 
+    // eslint-disable-next-line
   }, []);
 
   // Handles keyboard inputs
